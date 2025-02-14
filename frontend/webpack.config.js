@@ -35,7 +35,12 @@ module.exports = {
     }),
         new CopyPlugin({
             patterns: [
-                { from: "./src/templates", to: "templates" }
+                { from: "./src/templates", to: "templates" },
+                { from: "./node_modules/admin-lte/plugins/fontawesome-free/webfonts", to: "webfonts" },
+                { from: "./node_modules/admin-lte/plugins/fontawesome-free/css/all.min.css", to: "css" },
+                { from: "./node_modules/admin-lte/dist/css/adminlte.min.css", to: "css" },
+                { from: "./node_modules/jquery/dist/jquery.min.js", to: "js" },
+                { from: "./node_modules/admin-lte/dist/js/adminlte.min.js", to: "js" },
             ],
         }),
     ],
