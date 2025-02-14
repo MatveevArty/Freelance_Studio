@@ -63,7 +63,7 @@ export class Router {
             }
 
             // Присвоение соответствующего скрипта страницы
-            if (newRoute.load && newRoute.load === 'function') {
+            if (newRoute.load && typeof newRoute.load === 'function') {
                 newRoute.load();
             }
 
