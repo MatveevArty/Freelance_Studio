@@ -17,6 +17,18 @@ module.exports = {
         port: 9000,
         historyApiFallback: true,
     },
+    module: {
+        rules: [
+            {
+                test: /\.scss$/i,
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    "sass-loader",
+                ],
+            },
+        ],
+    },
     plugins: [
         new HtmlWebpackPlugin({
         template: "./index.html",
