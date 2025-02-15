@@ -14,6 +14,7 @@ export class Router {
                 route: '/',
                 title: 'Дашборд',
                 filePathTemplate: '/templates/dashboard.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new Dashboard();
                 }
@@ -21,12 +22,14 @@ export class Router {
             {
                 route: '/404',
                 title: 'Страница не найдена',
-                filePathTemplate: '/templates/404.html'
+                filePathTemplate: '/templates/404.html',
+                useLayout: false
             },
             {
                 route: '/login',
                 title: 'Авторизация',
                 filePathTemplate: '/templates/login.html',
+                useLayout: false,
                 load: () => {
                     new Login();
                 }
@@ -35,6 +38,7 @@ export class Router {
                 route: '/sign-up',
                 title: 'Регистрация',
                 filePathTemplate: '/templates/sign-up.html',
+                useLayout: false,
                 load: () => {
                     new SignUp();
                 }
@@ -59,7 +63,21 @@ export class Router {
 
             // Присовение соответствующего контента страница
             if (newRoute.filePathTemplate) {
-                this.contentPageElement.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
+
+                let contentBlock = this.contentPageElement;
+
+                // Присвоение html элементов лайаута при необходимости
+                if (newRoute.useLayout) {
+                    this.contentPageElement.innerHTML = await fetch(newRoute.useLayout).then(response => response.text());
+                    contentBlock = document.getElementById('layout-content');
+                    document.body.classList.add('sidebar-mini');
+                    document.body.classList.add('layout-fixed');
+
+                } else {
+                    document.body.classList.remove('sidebar-mini');
+                    document.body.classList.remove('layout-fixed');
+                }
+                contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
             }
 
             // Присвоение соответствующего скрипта страницы
