@@ -7,6 +7,7 @@ export class Router {
     constructor() {
         this.titlePageElement = document.getElementById('page-title');
         this.contentPageElement = document.getElementById('page-content');
+        this.adminLteStyleElement = document.getElementById('adminlte_style');
 
         this.initEvents();
         this.routes = [
@@ -31,8 +32,11 @@ export class Router {
                 filePathTemplate: '/templates/login.html',
                 useLayout: false,
                 load: () => {
+                    document.body.classList.add('login-page'); // Добавляем для выравнивания элементов по горизонтали
+                    document.body.style.height = '100vh'; // Добавляем для выравнивания по вертикали
                     new Login();
-                }
+                },
+                styles: ['icheck-bootstrap.min.css']
             },
             {
                 route: '/sign-up',
@@ -40,8 +44,11 @@ export class Router {
                 filePathTemplate: '/templates/sign-up.html',
                 useLayout: false,
                 load: () => {
+                    document.body.classList.add('register-page'); // Добавляем для выравнивания элементов по горизонтали
+                    document.body.style.height = '100vh'; // Добавляем для выравнивания по вертикали
                     new SignUp();
-                }
+                },
+                styles: ['icheck-bootstrap.min.css']
             }
         ]
     }
@@ -56,6 +63,16 @@ export class Router {
         const newRoute = this.routes.find(item => item.route === urlRoute);
 
         if (newRoute) {
+            // Подключение необходимых css файлов на текущую страницу
+            if (newRoute.styles && newRoute.styles.length > 0) {
+                newRoute.styles.forEach(style => {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = '/css/' + style;
+                    document.head.insertBefore(link, this.adminLteStyleElement);
+                });
+            }
+
             // Присвоение соответствующего заголовка страницы
             if (newRoute.title) {
                 this.titlePageElement.innerText = newRoute.title + ' | FreelanceStudio';
@@ -63,6 +80,9 @@ export class Router {
 
             // Присовение соответствующего контента страница
             if (newRoute.filePathTemplate) {
+
+                // Очищаем все классы у боди
+                document.body.className = '';
 
                 let contentBlock = this.contentPageElement;
 
