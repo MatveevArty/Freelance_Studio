@@ -34,7 +34,7 @@ export class Router {
                 load: () => {
                     document.body.classList.add('login-page'); // Добавляем для выравнивания элементов по горизонтали
                     document.body.style.height = '100vh'; // Добавляем для выравнивания по вертикали
-                    new Login();
+                    new Login(this.openNewRoute.bind(this));
                 },
                 unload: () => {
                     document.body.classList.remove('login-page'); // Удаляем классы при выходе со страницы
@@ -64,10 +64,16 @@ export class Router {
     initEvents() {
         window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
         window.addEventListener('popstate', this.activateRoute.bind(this));
-        document.addEventListener('click', this.openNewRoute.bind(this));
+        document.addEventListener('click', this.clickHandler.bind(this));
     }
 
-    async openNewRoute(e) {
+    async openNewRoute(url) {
+        const currentRoute = window.location.pathname;
+        history.pushState({}, '', url);
+        await this.activateRoute(null, currentRoute);
+    }
+
+    async clickHandler(e) {
         let element = null;
         if (e.target.nodeName === 'A') {
             element = e.target;
@@ -83,9 +89,7 @@ export class Router {
                 return;
             }
 
-            const currentRoute = window.location.pathname;
-            history.pushState({}, '', url);
-            await this.activateRoute(null, currentRoute);
+            await this.openNewRoute(url);
         }
     }
 
