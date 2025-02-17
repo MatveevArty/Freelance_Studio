@@ -2,15 +2,15 @@ export class AuthUtils {
 
     static accessTokenKey = 'accessToken';
     static refreshTokenKey = 'refreshToken';
-    static userInfoTokenKey = 'infoUserInfo';
+    static userInfoTokenKey = 'userInfo';
 
     static setAuthInfo(accessToken, refreshToken, userInfo) {
         localStorage.setItem(this.accessTokenKey, accessToken);
         localStorage.setItem(this.refreshTokenKey, refreshToken);
-        localStorage.setItem(this.userInfoTokenKey, JSON.stringify({userInfo}));
+        localStorage.setItem(this.userInfoTokenKey, JSON.stringify(userInfo));
     }
 
-    static removeAuthInfo(accessToken, refreshToken, userInfo) {
+    static removeAuthInfo() {
         localStorage.removeItem(this.accessTokenKey);
         localStorage.removeItem(this.refreshTokenKey);
         localStorage.removeItem(this.userInfoTokenKey);

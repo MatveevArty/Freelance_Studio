@@ -1,4 +1,5 @@
 import {AuthUtils} from "../utils/auth-utils";
+import {HttpUtils} from "../utils/http-utils";
 
 export class Logout {
 
@@ -16,26 +17,11 @@ export class Logout {
 
     async logout() {
 
-        const response = await fetch('http://localhost:3000/api/logout', {
-            // Отправка post-запроса для логина в соответствии с запросами, предоставленными бэкендом
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                refreshToken: localStorage.getItem('refreshToken')
-            })
-        })
+        await HttpUtils.request('/signup','POST', {
+            refreshToken: AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey),
+        });
 
-        const result = await response.json();
-        console.log(result);
-
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userInfo');
-
+        AuthUtils.removeAuthInfo();
         this.openNewRoute('/login')
-
     }
 }
