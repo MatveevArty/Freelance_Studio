@@ -56,7 +56,10 @@ export class Login {
                 return;
             }
 
-            AuthUtils.setAuthInfo(result.response.accessToken, result.response.refreshToken, {id: result.response.id, name: result.response.name});
+            AuthUtils.setAuthInfo(result.response.accessToken, result.response.refreshToken, {
+                    id: result.response.id,
+                    name: result.response.name
+            });
             this.openNewRoute('/')
         }
     }

@@ -48,8 +48,14 @@ export class HttpUtils {
                 if (!token) {
                     result.redirect = '/login';
                 } else {
-                    // 2) Токен заэкспайрился
-
+                    // 2) Токен заэкспайрился/невалиден
+                    const updateTokenResult = await AuthUtils.updateRefreshToken()
+                    if (updateTokenResult) {
+                        // Повторный запрос посредством рекурсии
+                        return this.request(url, method, useAuth, body);
+                    } else {
+                        result.redirect = '/login';
+                    }
                 }
             }
         }
