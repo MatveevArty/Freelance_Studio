@@ -3,6 +3,7 @@ import {Login} from "./components/auth/login";
 import {SignUp} from "./components/auth/sign-up";
 import {Logout} from "./components/auth/logout";
 import {FreelancersList} from "./components/freelancers/freelancers-list";
+import {FileUtils} from "./utils/file-utils";
 
 export class Router {
 
@@ -73,7 +74,9 @@ export class Router {
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new FreelancersList(this.openNewRoute.bind(this));
-                }
+                },
+                styles: ['dataTables.bootstrap4.min.css'],
+                scripts: ['jquery.dataTables.min.js', 'dataTables.bootstrap4.min.js']
             },
         ]
     }
@@ -101,8 +104,10 @@ export class Router {
         if (element) {
             e.preventDefault();
 
+            const currentRoute = window.location.pathname;
             const url = element.href.replace(window.location.origin, '');
-            if (!url || url === '/#' || url.startsWith('javascript:void(0)')) {
+            // Второе условие отредактировано для обработки клика по кнопкам пагинации с href=# на вкладке Фрилансеры
+            if (!url || (currentRoute === url.replace('#', '')) || url.startsWith('javascript:void(0)')) {
                 return;
             }
 
@@ -119,6 +124,12 @@ export class Router {
                     document.querySelector(`link[href='/css/${style}']`).remove();
                 });
             }
+            // Удаление необходимых js файлов со страницы
+            if (currentRoute.scripts && currentRoute.scripts.length > 0) {
+                currentRoute.scripts.forEach(script => {
+                    document.querySelector(`script[src='/js/${script}']`).remove();
+                });
+            }
 
             // Вызов функции по удалению стилей css
             if (currentRoute.unload && typeof currentRoute.unload === 'function') {
@@ -133,11 +144,16 @@ export class Router {
             // Подключение необходимых css файлов на текущую страницу
             if (newRoute.styles && newRoute.styles.length > 0) {
                 newRoute.styles.forEach(style => {
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = '/css/' + style;
-                    document.head.insertBefore(link, this.adminLteStyleElement);
+                    FileUtils.loadPageStyle('/css/' + style, this.adminLteStyleElement);
                 });
+            }
+
+            // Подключение необходимых js файлов на текущую страницу
+            if (newRoute.scripts && newRoute.scripts.length > 0) {
+
+                for (const script of newRoute.scripts) {
+                    await FileUtils.loadPageScript('/js/' + script);
+                }
             }
 
             // Присвоение соответствующего заголовка страницы
