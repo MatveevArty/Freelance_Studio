@@ -8,6 +8,8 @@ module.exports = {
     output: {
         filename: 'app.js',
         path: path.resolve(__dirname, 'dist'),
+        // Добавляем это свойство для возможности загрузки app.js с любой страницы и при перезагрузке https://webpack.js.org/concepts/output/#root
+        publicPath: '/'
     },
     devServer: {
         static: {
