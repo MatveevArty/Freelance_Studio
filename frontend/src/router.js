@@ -293,7 +293,7 @@ export class Router {
                     contentBlock = document.getElementById('layout-content');
                     document.body.classList.add('sidebar-mini');
                     document.body.classList.add('layout-fixed');
-
+                    this.activateMenuItem(newRoute); // Инициализация метода выделения активной страницы сайта слева в лайауте
                 } else {
                     document.body.classList.remove('sidebar-mini');
                     document.body.classList.remove('layout-fixed');
@@ -311,5 +311,17 @@ export class Router {
             history.pushState({}, '', '/404');
             await this.activateRoute();
         }
+    }
+
+    activateMenuItem(route) {
+
+        document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+            const href = item.getAttribute('href');
+            if (route.route.includes(href) && href !== '/' || route.route === '/' && href === '/') {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        })
     }
 }
