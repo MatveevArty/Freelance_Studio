@@ -11,6 +11,8 @@ import {FreelancersDelete} from "./components/freelancers/freelancers-delete";
 import {OrdersList} from "./components/orders/orders-list";
 import {OrdersView} from "./components/orders/orders-view";
 import {OrdersCreate} from "./components/orders/orders-create";
+import {OrdersEdit} from "./components/orders/orders-edit";
+import {OrdersDelete} from "./components/orders/orders-delete";
 
 export class Router {
 
@@ -161,6 +163,32 @@ export class Router {
                     'select2.min.css',
                     'select2-bootstrap4.min.css'
                 ],
+            },
+            {
+                route: '/orders/edit',
+                title: 'Редактирование заказа',
+                filePathTemplate: '/templates/pages/orders/edit.html' ,
+                useLayout: '/templates/pages/layout.html',
+                load: () => {
+                    new OrdersEdit(this.openNewRoute.bind(this));
+                },
+                scripts: [
+                    'moment.min.js',
+                    'moment-ru-locale.js',
+                    'tempusdominus-bootstrap-4.min.js',
+                    'select2.full.min.js'
+                ],
+                styles: [
+                    'tempusdominus-bootstrap-4.min.css',
+                    'select2.min.css',
+                    'select2-bootstrap4.min.css'
+                ],
+            },
+            {
+                route: '/orders/delete',
+                load: () => {
+                    new OrdersDelete(this.openNewRoute.bind(this));
+                },
             },
         ]
     }
