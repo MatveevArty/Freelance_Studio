@@ -13,6 +13,7 @@ import {OrdersView} from "./components/orders/orders-view";
 import {OrdersCreate} from "./components/orders/orders-create";
 import {OrdersEdit} from "./components/orders/orders-edit";
 import {OrdersDelete} from "./components/orders/orders-delete";
+import {AuthUtils} from "./utils/auth-utils";
 
 export class Router {
 
@@ -20,6 +21,7 @@ export class Router {
         this.titlePageElement = document.getElementById('page-title');
         this.contentPageElement = document.getElementById('page-content');
         this.adminLteStyleElement = document.getElementById('adminlte_style');
+        this.userName = null;
 
         this.initEvents();
         this.routes = [
@@ -99,7 +101,7 @@ export class Router {
             {
                 route: '/freelancers/view',
                 title: 'Фрилансер',
-                filePathTemplate: '/templates/pages/freelancers/view.html' ,
+                filePathTemplate: '/templates/pages/freelancers/view.html',
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new FreelancersView(this.openNewRoute.bind(this));
@@ -108,7 +110,7 @@ export class Router {
             {
                 route: '/freelancers/create',
                 title: 'Создание фрилансера',
-                filePathTemplate: '/templates/pages/freelancers/create.html' ,
+                filePathTemplate: '/templates/pages/freelancers/create.html',
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new FreelancersCreate(this.openNewRoute.bind(this));
@@ -118,7 +120,7 @@ export class Router {
             {
                 route: '/freelancers/edit',
                 title: 'Редактирование фрилансера',
-                filePathTemplate: '/templates/pages/freelancers/edit.html' ,
+                filePathTemplate: '/templates/pages/freelancers/edit.html',
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new FreelancersEdit(this.openNewRoute.bind(this));
@@ -146,7 +148,7 @@ export class Router {
             {
                 route: '/orders/view',
                 title: 'Заказ',
-                filePathTemplate: '/templates/pages/orders/view.html' ,
+                filePathTemplate: '/templates/pages/orders/view.html',
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new OrdersView(this.openNewRoute.bind(this));
@@ -156,7 +158,7 @@ export class Router {
             {
                 route: '/orders/create',
                 title: 'Создание заказа',
-                filePathTemplate: '/templates/pages/orders/create.html' ,
+                filePathTemplate: '/templates/pages/orders/create.html',
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new OrdersCreate(this.openNewRoute.bind(this));
@@ -176,7 +178,7 @@ export class Router {
             {
                 route: '/orders/edit',
                 title: 'Редактирование заказа',
-                filePathTemplate: '/templates/pages/orders/edit.html' ,
+                filePathTemplate: '/templates/pages/orders/edit.html',
                 useLayout: '/templates/pages/layout.html',
                 load: () => {
                     new OrdersEdit(this.openNewRoute.bind(this));
@@ -293,6 +295,20 @@ export class Router {
                     contentBlock = document.getElementById('layout-content');
                     document.body.classList.add('sidebar-mini');
                     document.body.classList.add('layout-fixed');
+
+                    this.profileNameElement = document.getElementById('profile-name');
+
+                    if (!this.userName) {
+                        let userInfo = AuthUtils.getAuthInfo(AuthUtils.userInfoTokenKey);
+                        if (userInfo) {
+                            userInfo = JSON.parse(userInfo);
+                            if (userInfo && userInfo.name) {
+                                this.userName = userInfo.name;
+                            }
+                        }
+                    }
+                    this.profileNameElement.innerText = this.userName;
+
                     this.activateMenuItem(newRoute); // Инициализация метода выделения активной страницы сайта слева в лайауте
                 } else {
                     document.body.classList.remove('sidebar-mini');
