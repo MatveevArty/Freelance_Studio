@@ -2,6 +2,7 @@ import {FileUtils} from "../../utils/file-utils";
 import {HttpUtils} from "../../utils/http-utils";
 import config from "../../config/config";
 import {CommonUtils} from "../../utils/common-utils";
+import {ValidationUtils} from "../../utils/validation-utils";
 
 export class OrdersEdit {
 
@@ -27,6 +28,11 @@ export class OrdersEdit {
         this.scheduledCardElement = document.getElementById('scheduled-card');
         this.completeCardElement = document.getElementById('complete-card');
         this.deadlineCardElement = document.getElementById('deadline-card');
+
+        this.validations = [
+            {element: this.amountInputElement},
+            {element: this.descriptionInputElement},
+        ];
 
         this.init(id).then();
     }
@@ -163,29 +169,11 @@ export class OrdersEdit {
         });
     }
 
-    validateForm() {
-        // Установка флага
-        let isValid = true;
-
-        // Валдиация каждого инпутов Сумма и Описание
-        let textInputArray = [this.amountInputElement, this.descriptionInputElement];
-        for (let i = 0; i < textInputArray.length; i++) {
-            if (textInputArray[i].value) {
-                textInputArray[i].classList.remove('is-invalid');
-            } else {
-                textInputArray[i].classList.add('is-invalid');
-                isValid = false;
-            }
-        }
-
-        return isValid;
-    }
-
     async updateOrder(e) {
 
         e.preventDefault();
 
-        if (this.validateForm()) {
+        if (ValidationUtils.validateForm(this.validations)) {
 
             const changedData = {};
             // Проверка на изменения Суммы заказа и если да, то присвоения его в объект changedData
