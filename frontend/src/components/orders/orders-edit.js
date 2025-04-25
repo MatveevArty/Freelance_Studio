@@ -1,7 +1,4 @@
-import {FileUtils} from "../../utils/file-utils";
 import {HttpUtils} from "../../utils/http-utils";
-import config from "../../config/config";
-import {CommonUtils} from "../../utils/common-utils";
 import {ValidationUtils} from "../../utils/validation-utils";
 import {UrlUtils} from "../../utils/url-utils";
 
@@ -113,9 +110,7 @@ export class OrdersEdit {
             }
         }
 
-        // Инициация календаря, без jQuery никак всё-таки
-        const $calendarScheduled = $('#calendar-scheduled');
-        $calendarScheduled.datetimepicker({
+        const calendarOptions = {
             // format: 'L',
             inline: true,
             locale: 'ru', // Русификация календаря
@@ -124,25 +119,28 @@ export class OrdersEdit {
             },
             useCurrent: false, // Отмена выбора сегодняшнего дня
             date: order.scheduledDate,
-        });
-        $calendarScheduled.on("change.datetimepicker",  (e) => {
+        }
+
+        // Инициация календаря, без jQuery никак всё-таки
+        const $calendarScheduled = $('#calendar-scheduled');
+        $calendarScheduled.datetimepicker(Object.assign({}, calendarOptions, {date: order.scheduledDate}));
+        $calendarScheduled.on("change.datetimepicker", (e) => {
             this.scheduledDate = e.date;
         });
 
+        const $calendarDeadline = $('#calendar-deadline');
+        $calendarDeadline.datetimepicker(Object.assign({}, calendarOptions, {date: order.deadlineDate}));
+        $calendarDeadline.on("change.datetimepicker", (e) => {
+            this.deadlineDate = e.date;
+        });
+
         const $calendarComplete = $('#calendar-complete');
-        $calendarComplete.datetimepicker({
-            // format: 'L',
-            inline: true,
-            locale: 'ru', // Русификация календаря
-            icons: {
-                time: 'far fa-clock', //  Разница версий библиотеки font-awesome, по дефолту класс fa, не far
-            },
-            useCurrent: false, // Отмена выбора сегодняшнего дня
+        $calendarComplete.datetimepicker(Object.assign({}, calendarOptions, {
+            date: order.completeDate,
             buttons: {
                 showClear: true
-            },
-            date: order.completeDate,
-        });
+            }
+        }));
         $calendarComplete.on("change.datetimepicker", (e) => {
             // Присваивание верного значения в this.completeDate
             if (e.date) { // если дата выбрана
@@ -154,20 +152,7 @@ export class OrdersEdit {
             }
         });
 
-        const $calendarDeadline = $('#calendar-deadline');
-        $calendarDeadline.datetimepicker({
-            // format: 'L',
-            inline: true,
-            locale: 'ru', // Русификация календаря
-            icons: {
-                time: 'far fa-clock', //  Разница версий библиотеки font-awesome, по дефолту класс fa, не far
-            },
-            useCurrent: false, // Отмена выбора сегодняшнего дня
-            date: order.deadlineDate,
-        });
-        $calendarDeadline.on("change.datetimepicker", (e) => {
-            this.deadlineDate = e.date;
-        });
+
     }
 
     async updateOrder(e) {
