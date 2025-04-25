@@ -21,13 +21,7 @@ export class OrdersEdit {
         this.completeDate = null;
         this.deadlineDate = null;
 
-        this.freelancerSelectElement = document.getElementById('freelancerSelect');
-        this.statusSelectElement = document.getElementById('statusSelect');
-        this.amountInputElement = document.getElementById('amountInput');
-        this.descriptionInputElement = document.getElementById('descriptionInput');
-        this.scheduledCardElement = document.getElementById('scheduled-card');
-        this.completeCardElement = document.getElementById('complete-card');
-        this.deadlineCardElement = document.getElementById('deadline-card');
+        this.findElements();
 
         this.validations = [
             {element: this.amountInputElement},
@@ -35,6 +29,13 @@ export class OrdersEdit {
         ];
 
         this.init(id).then();
+    }
+
+    findElements() {
+        this.freelancerSelectElement = document.getElementById('freelancerSelect');
+        this.statusSelectElement = document.getElementById('statusSelect');
+        this.amountInputElement = document.getElementById('amountInput');
+        this.descriptionInputElement = document.getElementById('descriptionInput');
     }
 
     async init(id) {

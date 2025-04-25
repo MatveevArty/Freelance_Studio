@@ -61,13 +61,7 @@ export class OrdersCreate {
             this.deadlineDate = e.date;
         });
 
-        this.freelancerSelectElement = document.getElementById('freelancerSelect');
-        this.statusSelectElement = document.getElementById('statusSelect');
-        this.amountInputElement = document.getElementById('amountInput');
-        this.descriptionInputElement = document.getElementById('descriptionInput');
-        this.scheduledCardElement = document.getElementById('scheduled-card');
-        this.completeCardElement = document.getElementById('complete-card');
-        this.deadlineCardElement = document.getElementById('deadline-card');
+        this.findElements();
 
         this.validations = [
             {element: this.amountInputElement},
@@ -76,6 +70,15 @@ export class OrdersCreate {
             {element: this.deadlineCardElement, options: {checkProperty: this.deadlineDate}},
         ];
         this.getFreelancers().then();
+    }
+
+    findElements() {
+        this.freelancerSelectElement = document.getElementById('freelancerSelect');
+        this.statusSelectElement = document.getElementById('statusSelect');
+        this.amountInputElement = document.getElementById('amountInput');
+        this.descriptionInputElement = document.getElementById('descriptionInput');
+        this.scheduledCardElement = document.getElementById('scheduled-card');
+        this.deadlineCardElement = document.getElementById('deadline-card');
     }
 
     async getFreelancers() {

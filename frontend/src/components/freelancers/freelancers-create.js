@@ -9,15 +9,7 @@ export class FreelancersCreate {
         document.getElementById('saveButton').addEventListener('click', this.saveFreelancer.bind(this));
         bsCustomFileInput.init(); // Инициализация библиотеки загрузку фото для аватара фрилансера
 
-        this.nameInputElement = document.getElementById('nameInput');
-        this.lastNameInputElement = document.getElementById('lastNameInput');
-        this.emailInputElement = document.getElementById('emailInput');
-        this.educationInputElement = document.getElementById('educationInput');
-        this.locationInputElement = document.getElementById('locationInput');
-        this.skillsInputElement = document.getElementById('skillsInput');
-        this.infoInputElement = document.getElementById('infoInput');
-        this.levelSelectElement = document.getElementById('levelSelect');
-        this.avatarInputElement = document.getElementById('avatarInput');
+        this.findElements(); // Очищение конструктора и визуальный рефакторинг кода
 
         this.validations = [
             {element: this.nameInputElement},
@@ -28,6 +20,18 @@ export class FreelancersCreate {
             {element: this.infoInputElement},
             {element: this.emailInputElement, options: {pattern: /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/},},
         ]
+    }
+
+    findElements() {
+        this.nameInputElement = document.getElementById('nameInput');
+        this.lastNameInputElement = document.getElementById('lastNameInput');
+        this.emailInputElement = document.getElementById('emailInput');
+        this.educationInputElement = document.getElementById('educationInput');
+        this.locationInputElement = document.getElementById('locationInput');
+        this.skillsInputElement = document.getElementById('skillsInput');
+        this.infoInputElement = document.getElementById('infoInput');
+        this.levelSelectElement = document.getElementById('levelSelect');
+        this.avatarInputElement = document.getElementById('avatarInput');
     }
 
     async saveFreelancer(e) {
