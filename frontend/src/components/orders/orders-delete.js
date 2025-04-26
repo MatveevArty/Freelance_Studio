@@ -1,5 +1,5 @@
-import {HttpUtils} from "../../utils/http-utils";
 import {UrlUtils} from "../../utils/url-utils";
+import {OrdersService} from "../../services/orders-service";
 
 export class OrdersDelete {
 
@@ -15,15 +15,11 @@ export class OrdersDelete {
     }
 
     async deleteOrder(id) {
-        const result = await HttpUtils.request('/orders/' + id, 'DELETE', true);
-        // Проверка на наличие свойства редиректа с соответствующим действием при наличии
-        if (result.redirect) {
-            return this.openNewRoute(result.redirect);
-        }
+        const response = await OrdersService.deleteOrder(id);
 
-        if (result.error || !result.response || result.response && result.response.error) {
-            console.log(result.response.message);
-            return alert('Возникла ошибка при удалении заказа. Обратитесь в поддержку');
+        if (response.error) {
+            alert(response.error);
+            return response.redirect ? this.openNewRoute(response.redirect) : null;
         }
 
         return this.openNewRoute('/orders');

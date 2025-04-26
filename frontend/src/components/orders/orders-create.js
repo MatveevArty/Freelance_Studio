@@ -1,5 +1,6 @@
-import {HttpUtils} from "../../utils/http-utils";
 import {ValidationUtils} from "../../utils/validation-utils";
+import {FreelancersService} from "../../services/freelancers-service";
+import {OrdersService} from "../../services/orders-service";
 
 export class OrdersCreate {
 
@@ -49,8 +50,8 @@ export class OrdersCreate {
         this.validations = [
             {element: this.amountInputElement},
             {element: this.descriptionInputElement},
-            {element: this.scheduledCardElement, options: {checkProperty: this.scheduledDate}},
-            {element: this.deadlineCardElement, options: {checkProperty: this.deadlineDate}},
+            {element: this.scheduledCardElement, options: {checkProperty: () => this.scheduledDate}},
+            {element: this.deadlineCardElement, options: {checkProperty: () => this.deadlineDate}},
         ];
         this.getFreelancers().then();
     }
@@ -65,22 +66,17 @@ export class OrdersCreate {
     }
 
     async getFreelancers() {
-        const result = await HttpUtils.request('/freelancers');
-        // Проверка на наличие свойства редиректа с соответствующим действием при наличии
-        if (result.redirect) {
-            return this.openNewRoute(result.redirect);
+        const response = await FreelancersService.getFreelancers();
+
+        if (response.error) {
+            alert(response.error);
+            return response.redirect ? this.openNewRoute(response.redirect) : null;
         }
 
-        if (result.error || !result.response || result.response && (result.response.error || !result.response.freelancers)) {
-            return alert('Возникла ошибка при запросе фрилансеров. Обратитесь в поддержку')
-        }
-
-
-        const freelancers = result.response.freelancers;
-        for (let i = 0; i < freelancers.length; i++) {
+        for (let i = 0; i < response.freelancers.length; i++) {
             const option = document.createElement("option");
-            option.value = freelancers[i].id;
-            option.innerText = freelancers[i].name + ' ' + freelancers[i].lastName;
+            option.value = response.freelancers[i].id;
+            option.innerText = response.freelancers[i].name + ' ' + response.freelancers[i].lastName;
             this.freelancerSelectElement.appendChild(option);
         }
 
@@ -109,18 +105,14 @@ export class OrdersCreate {
                 createData.completeDate = this.completeDate.toISOString();
             }
 
-            const result = await HttpUtils.request('/orders', 'POST', true, createData);
-            // Проверка на наличие свойства редиректа с соответствующим действием при наличии
-            if (result.redirect) {
-                return this.openNewRoute(result.redirect);
+            const response = await OrdersService.createOrder(createData);
+
+            if (response.error) {
+                alert(response.error);
+                return response.redirect ? this.openNewRoute(response.redirect) : null;
             }
 
-            if (result.error || !result.response || result.response && result.response.error) {
-                console.log(result.response.message);
-                return alert('Возникла ошибка при добавлении заказа. Обратитесь в поддержку');
-            }
-
-            return this.openNewRoute('/orders/view?id=' + result.response.id);
+            return this.openNewRoute('/orders/view?id=' + response.id);
         }
     }
 }

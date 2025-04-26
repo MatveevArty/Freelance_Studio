@@ -1,6 +1,6 @@
 import {AuthUtils} from "../../utils/auth-utils";
-import {HttpUtils} from "../../utils/http-utils";
 import {ValidationUtils} from "../../utils/validation-utils";
+import {AuthService} from "../../services/auth-service";
 
 export class SignUp {
 
@@ -45,23 +45,25 @@ export class SignUp {
         let passwordInput = this.validations.find(item => item.element === this.passwordRepeatElement);
         passwordInput.options.compareTo = this.passwordElement.value;
 
-
         if (ValidationUtils.validateForm(this.validations)) {
-
-            const result = await HttpUtils.request('/signup','POST', false, {
+            const signupResult = await AuthService.signUp({
                 name: this.nameElement.value,
                 lastName: this.lastNameElement.value,
                 email: this.emailElement.value,
                 password: this.passwordElement.value
-            });
-            if (result.error || !result.response || result.response && (!result.response.accessToken || !result.response.refreshToken || !result.response.id || !result.response.name)) {
-                // Отображаем сообщение об ошибке логина
-                this.commonErrorElement.style.display = 'block';
-                return;
+            })
+
+            if (signupResult) {
+                AuthUtils.setAuthInfo(signupResult.accessToken, signupResult.refreshToken, {
+                    id: signupResult.id,
+                    name: signupResult.name
+                });
+
+                return this.openNewRoute('/')
             }
 
-            AuthUtils.setAuthInfo(result.response.accessToken, result.response.refreshToken, {id: result.response.id, name: result.response.name});
-            this.openNewRoute('/');
+            // Отображаем сообщение об ошибке логина
+            this.commonErrorElement.style.display = 'block';
         }
     }
 }

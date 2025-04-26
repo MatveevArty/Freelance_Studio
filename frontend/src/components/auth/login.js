@@ -1,6 +1,6 @@
 import {AuthUtils} from "../../utils/auth-utils";
-import {HttpUtils} from "../../utils/http-utils";
 import {ValidationUtils} from "../../utils/validation-utils";
+import {AuthService} from "../../services/auth-service";
 
 export class Login {
 
@@ -30,28 +30,29 @@ export class Login {
         this.commonErrorElement = document.getElementById('common-error');
     }
 
-    async login () {
+    async login() {
         // Скрываем сообщение об ошибке логина
         this.commonErrorElement.style.display = 'none';
 
         if (ValidationUtils.validateForm(this.validations)) {
 
-            const result = await HttpUtils.request('/login','POST', false,{
+            const loginResult = await AuthService.logIn({
                 email: this.emailElement.value,
                 password: this.passwordElement.value,
                 rememberMe: this.rememberMeElement.checked
             })
-            if (result.error || !result.response || result.response && (!result.response.accessToken || !result.response.refreshToken || !result.response.id || !result.response.name)) {
-                // Отображаем сообщение об ошибке логина
-                this.commonErrorElement.style.display = 'block';
-                return;
+
+            if (loginResult) {
+                AuthUtils.setAuthInfo(loginResult.accessToken, loginResult.refreshToken, {
+                    id: loginResult.id,
+                    name: loginResult.name
+                });
+
+                return this.openNewRoute('/')
             }
 
-            AuthUtils.setAuthInfo(result.response.accessToken, result.response.refreshToken, {
-                    id: result.response.id,
-                    name: result.response.name
-            });
-            this.openNewRoute('/')
+            // Отображаем сообщение об ошибке логина
+            this.commonErrorElement.style.display = 'block';
         }
     }
 }

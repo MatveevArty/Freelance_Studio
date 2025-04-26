@@ -1,5 +1,5 @@
 import {AuthUtils} from "../../utils/auth-utils";
-import {HttpUtils} from "../../utils/http-utils";
+import {AuthService} from "../../services/auth-service";
 
 export class Logout {
 
@@ -17,7 +17,7 @@ export class Logout {
 
     async logout() {
 
-        await HttpUtils.request('/signup','POST', false, {
+        await AuthService.logout({
             refreshToken: AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey),
         });
 

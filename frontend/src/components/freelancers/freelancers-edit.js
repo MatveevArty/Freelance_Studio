@@ -1,9 +1,9 @@
-import {HttpUtils} from "../../utils/http-utils";
 import config from "../../config/config";
 import {CommonUtils} from "../../utils/common-utils";
 import {FileUtils} from "../../utils/file-utils";
 import {ValidationUtils} from "../../utils/validation-utils";
 import {UrlUtils} from "../../utils/url-utils";
+import {FreelancersService} from "../../services/freelancers-service";
 
 export class FreelancersEdit {
 
@@ -46,20 +46,15 @@ export class FreelancersEdit {
     }
 
     async getFreelancer(id) {
+        const response = await FreelancersService.getFreelancer(id);
 
-        const result = await HttpUtils.request('/freelancers/' + id);
-        // Проверка на наличие свойства редиректа с соответствующим действием при наличии
-        if (result.redirect) {
-            return this.openNewRoute(result.redirect);
+        if (response.error) {
+            alert(response.error);
+            return response.redirect ? this.openNewRoute(response.redirect) : null;
         }
 
-        if (result.error || !result.response || result.response && result.response.error) {
-            console.log(result.response.message);
-            return alert('Возникла ошибка при запросе фрилансера. Обратитесь в поддержку')
-        }
-
-        this.freelancerOriginalData = result.response;
-        this.showFreelancer(result.response);
+        this.freelancerOriginalData = response.freelancer;
+        this.showFreelancer(response.freelancer);
     }
 
     showFreelancer(freelancer) {
@@ -134,15 +129,11 @@ export class FreelancersEdit {
             }
 
             if (Object.keys(changedData).length > 0) {
-                const result = await HttpUtils.request('/freelancers/' + this.freelancerOriginalData.id, 'PUT', true, changedData);
-                // Проверка на наличие свойства редиректа с соответствующим действием при наличии
-                if (result.redirect) {
-                    return this.openNewRoute(result.redirect);
-                }
+                const response = await FreelancersService.updateFreelancer(this.freelancerOriginalData.id, changedData);
 
-                if (result.error || !result.response || result.response && result.response.error) {
-                    console.log(result.response.message);
-                    return alert('Возникла ошибка при редактировании фрилансера. Обратитесь в поддержку');
+                if (response.error) {
+                    alert(response.error);
+                    return response.redirect ? this.openNewRoute(response.redirect) : null;
                 }
                 
                 return this.openNewRoute('/freelancers/view?id=' + this.freelancerOriginalData.id);

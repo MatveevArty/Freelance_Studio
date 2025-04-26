@@ -23,7 +23,7 @@ export class ValidationUtils {
             } else if (options.hasOwnProperty('compareTo')) {
                 condition = element.value && element.value === options.compareTo;
             } else if (options.hasOwnProperty('checkProperty')) {
-                condition = options.checkProperty;
+                condition = typeof options.checkProperty === 'function' ? options.checkProperty() : options.checkProperty;
             } else if (options.hasOwnProperty('checked')) {
                 condition = element.checked;
             }

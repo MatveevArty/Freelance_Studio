@@ -1,6 +1,5 @@
-import {HttpUtils} from "../../utils/http-utils";
-import config from "../../config/config";
 import {CommonUtils} from "../../utils/common-utils";
+import {OrdersService} from "../../services/orders-service";
 
 
 export class OrdersList {
@@ -12,18 +11,14 @@ export class OrdersList {
     }
 
     async getOrders() {
+        const response = await OrdersService.getOrders();
 
-        const result = await HttpUtils.request('/orders');
-        // Проверка на наличие свойства редиректа с соответствующим действием при наличии
-        if (result.redirect) {
-            return this.openNewRoute(result.redirect);
+        if (response.error) {
+            alert(response.error);
+            return response.redirect ? this.openNewRoute(response.redirect) : null;
         }
 
-        if (result.error || !result.response || result.response && (result.response.error || !result.response.orders)) {
-            return alert('Возникла ошибка при запросе заказов. Обратитесь в поддержку')
-        }
-
-        this.showRecords(result.response.orders);
+        this.showRecords(response.orders);
     }
 
     showRecords(orders) {
